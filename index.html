@@ -25,20 +25,21 @@
                 endDate = new Date(year, month + 1, 3);
             }
 
-            // Форматируем даты в YYYYMMDD
+            // Форматируем даты в YYYY.MM.DD
             const format = (date) => {
                 const pad = n => n.toString().padStart(2, '0');
                 return [
                     date.getFullYear(),
-                    pad(date.getMonth() + 1),
+                    pad(date.getMonth() + 1), // Месяцы 01-12
                     pad(date.getDate())
-                ].join('');
+                ].join('.');
             };
 
             // Формируем URL
             const baseURL = "https://portal.unn.ru/ruzapi/schedule/group/47586.ics";
-            const cacheBuster = `&_=${Date.now()}`; // Для обхода кэша
-            const url = `${baseURL}?start=${format(startDate)}&end=${format(endDate)}${cacheBuster}`;
+            const formattedStart = format(startDate);
+            const formattedEnd = format(endDate);
+            const url = `${baseURL}?start=${formattedStart}&finish=${formattedEnd}&lng=1&_=${Date.now()}`;
 
             // Перенаправляем
             window.location.href = url;
@@ -46,6 +47,6 @@
     </script>
 </head>
 <body onload="generateICS()">
-    Перенаправление на актуальный календарь...
+    Перенаправление на календарь...
 </body>
 </html>
