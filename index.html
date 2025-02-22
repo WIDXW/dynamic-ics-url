@@ -2,39 +2,50 @@
 <html>
 <head>
     <script>
-        function generateDynamicURL() {
+        function generateICS() {
             const today = new Date();
             const day = today.getDate();
             const month = today.getMonth();
             const year = today.getFullYear();
-            let start, end;
 
-            // Если сегодня 1-7 число, запрашиваем 1-7 текущего месяца
-            if (day <= 7) {
-                start = new Date(year, month, 1);
-                end = new Date(year, month, 7);
-            } 
-            // Если сегодня 8-15 число, запрашиваем 8-15
-            else {
-                start = new Date(year, month, 8);
-                end = new Date(year, month, 15);
+            let startDate, endDate;
+
+            // Определяем диапазон
+            if (day >= 1 && day <= 10) {
+                // 28 предыдущего месяца – 15 текущего
+                startDate = new Date(year, month - 1, 28);
+                endDate = new Date(year, month, 15);
+            } else if (day >= 11 && day <= 20) {
+                // 8–20 текущего месяца
+                startDate = new Date(year, month, 8);
+                endDate = new Date(year, month, 20);
+            } else {
+                // 18 текущего – 3 следующего
+                startDate = new Date(year, month, 18);
+                endDate = new Date(year, month + 1, 3);
             }
 
-            // Форматирование дат в YYYYMMDD
-            const format = (date) => date.toISOString().slice(0,10).replace(/-/g, '');
-            
-            // Добавляем параметр для избежания кэширования
-            const timestamp = new Date().getTime();
-            
-            // Формируем итоговый URL
-            const url = `https://portal.unn.ru/ruzapi/schedule/group/47586.ics?start=${format(start)}&end=${format(end)}&_=${timestamp}`;
-            
-            // Перенаправляем на сгенерированный URL
+            // Форматируем даты в YYYYMMDD
+            const format = (date) => {
+                const pad = n => n.toString().padStart(2, '0');
+                return [
+                    date.getFullYear(),
+                    pad(date.getMonth() + 1),
+                    pad(date.getDate())
+                ].join('');
+            };
+
+            // Формируем URL
+            const baseURL = "https://portal.unn.ru/ruzapi/schedule/group/47586.ics";
+            const cacheBuster = `&_=${Date.now()}`; // Для обхода кэша
+            const url = `${baseURL}?start=${format(startDate)}&end=${format(endDate)}${cacheBuster}`;
+
+            // Перенаправляем
             window.location.href = url;
         }
     </script>
 </head>
-<body onload="generateDynamicURL()">
-    Redirecting...
+<body onload="generateICS()">
+    Перенаправление на актуальный календарь...
 </body>
 </html>
