@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function generateDynamicURL() {
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth();
+            const year = today.getFullYear();
+            let start, end;
+
+            // Если сегодня 1-7 число, запрашиваем 1-7 текущего месяца
+            if (day <= 7) {
+                start = new Date(year, month, 1);
+                end = new Date(year, month, 7);
+            } 
+            // Если сегодня 8-15 число, запрашиваем 8-15
+            else {
+                start = new Date(year, month, 8);
+                end = new Date(year, month, 15);
+            }
+
+            // Форматирование дат в YYYYMMDD
+            const format = (date) => date.toISOString().slice(0,10).replace(/-/g, '');
+            
+            // Добавляем параметр для избежания кэширования
+            const timestamp = new Date().getTime();
+            
+            // Формируем итоговый URL
+            const url = `https://portal.unn.ru/ruzapi/schedule/group/47586.ics?start=${format(start)}&end=${format(end)}&_=${timestamp}`;
+            
+            // Перенаправляем на сгенерированный URL
+            window.location.href = url;
+        }
+    </script>
+</head>
+<body onload="generateDynamicURL()">
+    Redirecting...
+</body>
+</html>
